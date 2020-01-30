@@ -75,6 +75,8 @@ export const performTests = async (testObjects: object[], cmd: any) => {
   // true if the options are set was set
   const toCurl = cmd.output == 'curl';
 
+  let testResults = [];
+
   // Load existing objects
   if (cmd.load) {
     let fileMap: Map<string, object> = new Map<string, object>()
@@ -169,6 +171,12 @@ export const performTests = async (testObjects: object[], cmd: any) => {
 
             const endTime = new Date().getTime();
             const execTime = (endTime - startTime) / 1000;
+            
+            // var newError = JSON.parse(JSON.stringify(error));
+            // newError.messageClear = chalk.reset(newError.message);
+            // testResults.push(newError);
+            testResults.push(error);
+
             if (error.isError === true) {
               if (runTimes === 1) {
                 spinner.clear();
@@ -255,6 +263,23 @@ export const performTests = async (testObjects: object[], cmd: any) => {
     })
     let resultOrder = Array.from(fileMap.entries()).reduce((main, [key, value]) => ({...main, [key]: value}), {})
     jsonfile.writeFileSync(fileName, resultOrder, { spaces: 2, EOL: '\r\n'})
+  }
+
+  if (cmd.junit) {
+    console.log('Test results', testResults);
+    // TODO: format junit xml
+    
+    // <?xml version="1.0" encoding="UTF-8"?>
+    // <testsuites duration="50.5">
+    //     <testsuite failures="0" name="Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/agent.js" package="tests/suites/casper/agent" tests="3" time="0.256">
+    //         <testcase classname="tests/suites/casper/agent" name="Default user agent matches /CasperJS/" time="0.103"/>
+    //         <testcase classname="tests/suites/casper/agent" name="Default user agent matches /plop/" time="0.146"/>
+    //         <testcase classname="tests/suites/casper/agent" name="Default user agent matches /plop/" time="0.007"/>
+    //     </testsuite>
+    //     <testsuite failures="0" name="Untitled suite in /Users/niko/Sites/casperjs/tests/suites/casper/alert.js" package="tests/suites/casper/alert" tests="1" time="0.449">
+    //         <testcase classname="tests/suites/casper/alert" name="alert event has been intercepted" time="0.449"/>
+    //     </testsuite>
+        
   }
   return 0;
 }

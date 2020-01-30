@@ -15,6 +15,7 @@ const initializeCommands = () => {
     .option('-s, --save [file]', 'Saves the results of the executions and variables to file. default: ./strest_history.json', 'strest_history.json')
     .option('-l, --load [file]', 'Loads file to use as input for chained requests. default: ./strest_history.json', 'strest_history.json')
     .option('-k, --key [keyname]', 'Execute a specific key in the file.')
+    .option('-j, --junit [file]','Output to JUnit file')
     .action(async (dir, cmd: any) => {
       // use time to inform the user about how long the execution of the test took
       const executionStartedTime = new Date().getTime();
